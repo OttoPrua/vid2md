@@ -12,7 +12,7 @@ if [ -z "$INPUT" ] || [ -z "$OUTPUT_DIR" ]; then
 fi
 
 LOG="${TMPDIR:-/tmp}/vid2md_phase1.log"
-VID2MD="$HOME/Projects/vid2md/vid2md.py"
+VID2MD="${VID2MD_PATH:-$(cd "$(dirname "$0")/.." && pwd)/vid2md.py}"
 TMPDIR=$(mktemp -d /tmp/vid_segments_XXXXXX)
 SEGMENT_SECS=$((SEGMENT_MINS * 60))
 

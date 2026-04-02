@@ -119,7 +119,35 @@ Input (URL or file)
 
 ### OCR backend
 
-By default uses `wechat-ocr` (local macOS binary, free, Chinese + English). Configure the path via `WECHAT_OCR_BIN` environment variable. Falls back to macOS Vision framework if unavailable.
+vid2md tries each OCR backend in priority order and falls back automatically:
+
+| Priority | Backend | Platform | Languages | Notes |
+|----------|---------|----------|-----------|-------|
+| 1 | **wechat-ocr** | macOS | Chinese + English | Local binary, fastest, most accurate for CJK. Set path via `WECHAT_OCR_BIN`. |
+| 2 | **macOS Vision** (`pyobjc-framework-Vision`) | macOS 13+ | Chinese, English, Japanese, Korean | Built-in, no extra install. Good accuracy. |
+| 3 | **EasyOCR** | macOS, Linux, Windows | 80+ languages | GPU-accelerated via CUDA/MPS. Install: `pip install easyocr`. |
+| 4 | **Tesseract** | macOS, Linux, Windows | 100+ languages | CPU-only, broad language support. Install: `brew install tesseract`. |
+| 5 | _(skip)_ | — | — | If all backends unavailable, OCR section is omitted from output. |
+
+**Recommended by device:**
+
+| Device | Recommended OCR | Reason |
+|--------|----------------|--------|
+| **Mac (Apple Silicon)** | wechat-ocr → macOS Vision | Both run locally, no GPU needed, CJK-optimized |
+| **Mac (Intel)** | macOS Vision → EasyOCR (CPU) | Vision built-in; EasyOCR as fallback |
+| **Linux / CUDA GPU** | EasyOCR (CUDA) | GPU acceleration, broad language support |
+| **Linux (CPU-only)** | Tesseract | Lightweight, no model download required |
+| **Windows (WSL2)** | EasyOCR (CUDA) or Tesseract | wechat-ocr and Vision not available outside macOS |
+
+Configure the OCR backend via environment variable:
+
+```bash
+# Use a specific backend (wechat-ocr / vision / easyocr / tesseract)
+export VID2MD_OCR_BACKEND=easyocr
+
+# Custom path for wechat-ocr
+export WECHAT_OCR_BIN=/path/to/wechat-ocr
+```
 
 ### AI frame description
 
@@ -179,9 +207,9 @@ The script processes in 10,000-character chunks to avoid context limits, then me
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MODELSCOPE_CACHE` | `~/.cache/modelscope` | Cache directory for FunASR models |
-| `WECHAT_OCR_BIN` | `~/bin/wechat-ocr` | Path to wechat-ocr binary |
-| `OLLAMA_DESC_HOST` | `http://localhost:11434` | Ollama endpoint for frame descriptions |
+| `MODELSCOPE_CACHE` | `~/.cache/modelscope` _(example)_ | Cache directory for FunASR models |
+| `WECHAT_OCR_BIN` | `/path/to/wechat-ocr` | Path to wechat-ocr binary |
+| `OLLAMA_DESC_HOST` | `http://localhost:11434` | Ollama endpoint (default: local) |
 | `OLLAMA_DESC_MODEL` | `qwen2.5vl:7b` | Vision model for frame descriptions |
 
 ### CLI options

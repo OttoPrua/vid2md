@@ -244,8 +244,6 @@ def describe_frame(image_path: str) -> str:
     default_model = _os.environ.get("OLLAMA_DESC_MODEL", "qwen2.5vl:7b")
     endpoints = [
         (default_host, default_model),
-        ("http://localhost:11434", "qwen2.5vl:7b"),
-        ("http://localhost:11434", "qwen3.5:9b"),
     ]
 
     try:

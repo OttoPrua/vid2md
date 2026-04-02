@@ -119,7 +119,35 @@ python3 vid2md.py "URL" --lang zh --no-ocr --no-desc
 
 ### OCR 后端
 
-默认使用 `wechat-ocr`（本地 macOS 二进制，免费，中英文）。通过 `WECHAT_OCR_BIN` 环境变量配置路径。不可用时回退到 macOS Vision 框架。
+vid2md 按优先级依次尝试各 OCR 后端，自动回退：
+
+| 优先级 | 后端 | 平台 | 语言 | 说明 |
+|--------|------|------|------|------|
+| 1 | **wechat-ocr** | macOS | 中文 + 英文 | 本地二进制，最快，CJK 准确率最高。通过 `WECHAT_OCR_BIN` 配置路径。|
+| 2 | **macOS Vision** (`pyobjc-framework-Vision`) | macOS 13+ | 中、英、日、韩 | 系统内置，无需额外安装，准确率良好。|
+| 3 | **EasyOCR** | macOS / Linux / Windows | 80+ 种语言 | 支持 CUDA/MPS GPU 加速。安装：`pip install easyocr`。|
+| 4 | **Tesseract** | macOS / Linux / Windows | 100+ 种语言 | 纯 CPU，语言覆盖广。安装：`brew install tesseract`。|
+| 5 | _(跳过)_ | — | — | 所有后端均不可用时，输出中省略 OCR 内容。|
+
+**按设备推荐：**
+
+| 设备 | 推荐 OCR | 原因 |
+|------|---------|------|
+| **Mac（Apple Silicon）** | wechat-ocr → macOS Vision | 本地运行，无需 GPU，CJK 优化 |
+| **Mac（Intel）** | macOS Vision → EasyOCR（CPU） | Vision 系统内置；EasyOCR 作备选 |
+| **Linux / CUDA GPU** | EasyOCR（CUDA） | GPU 加速，语言覆盖广 |
+| **Linux（纯 CPU）** | Tesseract | 轻量，无需下载模型 |
+| **Windows（WSL2）** | EasyOCR（CUDA）或 Tesseract | wechat-ocr 和 Vision 仅限 macOS |
+
+通过环境变量指定 OCR 后端：
+
+```bash
+# 指定后端（wechat-ocr / vision / easyocr / tesseract）
+export VID2MD_OCR_BACKEND=easyocr
+
+# 自定义 wechat-ocr 路径
+export WECHAT_OCR_BIN=/path/to/wechat-ocr
+```
 
 ### AI 帧描述
 
@@ -179,8 +207,8 @@ python3 scripts/phase2_batch.py \
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `MODELSCOPE_CACHE` | `~/.cache/modelscope` | FunASR 模型缓存目录 |
-| `WECHAT_OCR_BIN` | `~/bin/wechat-ocr` | wechat-ocr 二进制路径 |
+| `MODELSCOPE_CACHE` | `~/.cache/modelscope` _(示例)_ | FunASR 模型缓存目录 |
+| `WECHAT_OCR_BIN` | `/path/to/wechat-ocr` | wechat-ocr 二进制路径 |
 | `OLLAMA_DESC_HOST` | `http://localhost:11434` | 帧描述 Ollama 端点 |
 | `OLLAMA_DESC_MODEL` | `qwen2.5vl:7b` | 帧描述视觉模型 |
 

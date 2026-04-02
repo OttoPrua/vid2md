@@ -1,0 +1,8 @@
+yt-dlp
+faster-whisper
+mlx-whisper; sys_platform == "darwin"
+funasr; python_version >= "3.8"
+torch
+ffmpeg-python
+pyobjc-framework-Vision; sys_platform == "darwin"
+pyobjc-framework-Quartz; sys_platform == "darwin"

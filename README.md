@@ -15,6 +15,8 @@
   <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License">
 </p>
 
+> 🤖 **Deploy with OpenClaw:** Tell your agent — *"Run the DEPLOY.md guide"* — and it will walk through installation interactively. → [DEPLOY.md](DEPLOY.md)
+
 vid2md downloads a video from YouTube, Bilibili, or a local file, extracts a transcript, captures key frames, runs OCR on screen content, and optionally describes each frame with a local vision model — producing a single, navigable Markdown document.
 
 ---

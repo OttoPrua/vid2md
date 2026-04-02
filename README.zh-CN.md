@@ -15,6 +15,8 @@
   <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License">
 </p>
 
+> 🤖 **让 OpenClaw 自动部署：** 告诉你的 agent — *「按照 DEPLOY.md 帮我部署」* — 它会交互式逐步完成安装。→ [DEPLOY.md](DEPLOY.md)
+
 vid2md 从 YouTube、B站或本地文件下载视频，提取字幕、截取关键帧、对画面内容 OCR，并可选用本地视觉模型描述每一帧 — 最终输出一份可导航的结构化 Markdown 文档。
 
 ---
